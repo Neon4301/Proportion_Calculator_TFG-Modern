@@ -28,11 +28,11 @@
 
 ## 🖼 Скриншоты
 
-Добавьте сюда скриншоты интерфейса.
-
-
-![preview](preview.png)
-
+<img width="1902" height="906" alt="image" src="https://github.com/user-attachments/assets/ec58b494-7435-4869-a293-a613a8823bda" />
+<img width="1894" height="907" alt="image" src="https://github.com/user-attachments/assets/a551d57d-0ed9-41a0-8692-341c9b61fd02" />
+<img width="1902" height="907" alt="image" src="https://github.com/user-attachments/assets/6b093c23-6594-4125-9501-65a1abe653b9" />
+<img width="1902" height="906" alt="image" src="https://github.com/user-attachments/assets/1cb10b33-58f2-4743-ba3d-410ec08deb72" />
+<img width="1902" height="908" alt="image" src="https://github.com/user-attachments/assets/b7aaa54d-c96b-4d7a-b0ff-bf0e9f801c01" />
 
 ---
 
