@@ -1,1045 +1,171 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proportion Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-button{cursor:pointer;font-family:inherit;}
-input{font-family:inherit;}
-
-#h-sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-#mc-head{width:24px;height:24px;image-rendering:pixelated;border-radius:4px;border:1px solid var(--border2);box-shadow:0 0 12px var(--glow);}
-.gh-link{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:10px;text-decoration:none;letter-spacing:0.06em;transition:color 0.2s;opacity:0.7;}
-.gh-link:hover{color:var(--accent);opacity:1;}
-.gh-icon{width:14px;height:14px;flex-shrink:0;}
-
-body.theme-obsidian{--bg:#080a0f;--surface:#111620;--surface2:#161d2e;--border:rgba(100,140,255,0.12);--border2:rgba(100,140,255,0.28);--text:#d4e0ff;--muted:#4a5878;--accent:#5c8eff;--accent2:#a78bfa;--danger:#ff6b8a;--success:#4ade80;--glow:rgba(92,142,255,0.32);}
-body.theme-forge{--bg:#0a0600;--surface:#1a1108;--surface2:#221808;--border:rgba(255,160,50,0.15);--border2:rgba(255,160,50,0.38);--text:#f5deb3;--muted:#6b5230;--accent:#ff9d1a;--accent2:#e05c1a;--danger:#ff4455;--success:#7ec88a;--glow:rgba(255,157,26,0.32);}
-body.theme-arctic{--bg:#f0f4ff;--surface:#ffffff;--surface2:#f4f7ff;--border:rgba(60,100,200,0.12);--border2:rgba(60,100,200,0.32);--text:#1a2640;--muted:#8090b0;--accent:#3b6bff;--accent2:#8b5cf6;--danger:#e53935;--success:#2e7d32;--glow:rgba(59,107,255,0.22);}
-body.theme-poison{--bg:#060a08;--surface:#0e1610;--surface2:#121d15;--border:rgba(50,230,120,0.12);--border2:rgba(50,230,120,0.32);--text:#c8f5d8;--muted:#2e5540;--accent:#22c55e;--accent2:#86efac;--danger:#f87171;--success:#4ade80;--glow:rgba(34,197,94,0.32);}
-
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding:2rem 1rem 4rem;transition:background 0.4s,color 0.4s;position:relative;overflow-x:hidden;}
-
-.bg-orb{position:fixed;pointer-events:none;border-radius:50%;filter:blur(90px);opacity:0.14;transition:background 0.5s;}
-.bg-orb1{width:450px;height:450px;top:-120px;right:-100px;background:var(--accent);animation:orb1 15s ease-in-out infinite;}
-.bg-orb2{width:320px;height:320px;bottom:-80px;left:-80px;background:var(--accent2);animation:orb2 20s ease-in-out infinite;}
-@keyframes orb1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-40px,50px) scale(1.12);}}
-@keyframes orb2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(50px,-35px) scale(0.9);}}
-
-.header{max-width:720px;margin:0 auto 2rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-.header-left h1{font-family:'Syne',sans-serif;font-size:clamp(1.3rem,4vw,2rem);font-weight:800;letter-spacing:-0.03em;color:var(--accent);line-height:1.1;text-shadow:0 0 40px var(--glow);}
-.header-left .sub{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-top:5px;}
-.header-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-
-.theme-dots{display:flex;gap:7px;align-items:center;}
-.tdot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.2s;}
-.tdot.active,.tdot:hover{border-color:var(--text);transform:scale(1.2);}
-.tdot-obsidian{background:linear-gradient(135deg,#5c8eff,#a78bfa);}
-.tdot-forge{background:linear-gradient(135deg,#ff9d1a,#e05c1a);}
-.tdot-arctic{background:linear-gradient(135deg,#3b6bff,#8b5cf6);}
-.tdot-poison{background:linear-gradient(135deg,#22c55e,#86efac);}
-
-.lang-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;font-size:11px;color:var(--text);letter-spacing:0.08em;transition:all 0.2s;display:flex;gap:6px;align-items:center;}
-.lang-btn:hover{background:var(--surface2);border-color:var(--accent);}
-.lseg{opacity:0.4;transition:opacity 0.2s;}
-.lseg.active{opacity:1;color:var(--accent);font-weight:700;}
-
-.container{max-width:720px;margin:0 auto;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;transition:border-color 0.3s,background 0.3s;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,0.025) 0%,transparent 60%);pointer-events:none;}
-.card-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.85rem;font-family:'Syne',sans-serif;font-weight:700;}
-
-.total-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
-.inp{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Mono',monospace;font-size:15px;padding:8px 12px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:130px;}
-.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
-.tag{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;white-space:nowrap;}
-.lbl-text{font-size:11px;color:var(--muted);white-space:nowrap;}
-
-/* ===== AUTO TOGGLE GLOBAL ===== */
-.auto-toggle-row{display:flex;align-items:center;gap:12px;padding:10px 0 6px;}
-.auto-toggle-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text);}
-.auto-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.08em;text-transform:uppercase;font-family:'Syne',sans-serif;transition:all 0.3s;}
-.auto-badge.on{background:rgba(74,222,128,0.15);color:var(--success);border:1px solid rgba(74,222,128,0.3);}
-.auto-badge.off{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-.auto-hint{font-size:9px;color:var(--muted);letter-spacing:0.04em;flex:1;}
-
-/* Toggle switch */
-.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0;}
-.toggle-switch input{opacity:0;width:0;height:0;}
-.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:24px;cursor:pointer;transition:background 0.25s;}
-.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.25s,box-shadow 0.25s;box-shadow:0 1px 4px rgba(0,0,0,0.35);}
-.toggle-switch input:checked+.toggle-track{background:var(--success);}
-.toggle-switch input:checked+.toggle-track::after{transform:translateX(20px);box-shadow:0 0 8px rgba(74,222,128,0.5);}
-
-/* Auto result panel */
-.auto-result-panel{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:10px;display:none;}
-.auto-result-panel.visible{display:block;animation:fadeIn 0.2s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
-.auto-result-title{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;}
-.auto-variants{display:flex;gap:8px;flex-wrap:wrap;}
-.auto-var-btn{background:var(--surface);border:1px solid var(--border2);border-radius:9px;padding:8px 12px;font-size:10px;font-family:'Syne',sans-serif;font-weight:700;color:var(--text);cursor:pointer;transition:all 0.2s;text-align:left;flex:1;min-width:160px;}
-.auto-var-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(92,142,255,0.05);}
-.auto-var-btn.selected{border-color:var(--accent);background:rgba(92,142,255,0.1);color:var(--accent);}
-.auto-var-btn .var-label{font-size:9px;color:var(--muted);margin-bottom:3px;letter-spacing:0.08em;}
-.auto-var-btn .var-total{font-size:14px;color:inherit;}
-.auto-var-btn .var-detail{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5;}
-
-/* INGREDIENT CARD */
-.ing-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;}
-.ing-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.25rem;display:grid;grid-template-columns:1fr 95px 1fr 36px;gap:14px;align-items:start;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;animation:cardIn 0.25s cubic-bezier(.34,1.4,.64,1);position:relative;overflow:hidden;}
-.ing-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px;opacity:0;transition:opacity 0.2s;}
-.ing-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 24px rgba(0,0,0,0.28);}
-.ing-card:hover::after{opacity:1;}
-@keyframes cardIn{from{opacity:0;transform:translateY(-10px) scale(0.97);}to{opacity:1;transform:none;}}
-
-.ing-name-wrap{display:flex;flex-direction:column;gap:3px;}
-.ing-name-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
-.ing-name-inp{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;padding:3px 0;outline:none;width:100%;transition:border-color 0.2s;}
-.ing-name-inp:focus{border-color:var(--accent);}
-.ing-name-inp::placeholder{color:var(--muted);font-weight:400;font-size:12px;}
-
-.ing-unit-wrap{display:flex;flex-direction:column;gap:3px;}
-.ing-unit-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
-.ing-unit-inp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--accent);font-family:'Space Mono',monospace;font-size:13px;padding:5px 8px;outline:none;width:100%;transition:border-color 0.2s;}
-.ing-unit-inp:focus{border-color:var(--accent);}
-
-/* PERCENT + RANGE COLUMN */
-.pct-wrap{display:flex;flex-direction:column;gap:6px;}
-.pct-top{display:flex;align-items:center;gap:6px;}
-.pct-lbl-small{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;flex-shrink:0;}
-.pct-spacer{flex:1;}
-.pct-num-inp{width:56px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--accent);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;padding:3px 6px;outline:none;text-align:right;transition:border-color 0.2s,box-shadow 0.2s;-moz-appearance:textfield;}
-.pct-num-inp::-webkit-outer-spin-button,.pct-num-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-.pct-num-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--glow);}
-.pct-num-inp.over{color:var(--danger);border-color:var(--danger);}
-.pct-num-inp[disabled]{opacity:0.55;cursor:not-allowed;background:var(--surface2);}
-.pct-suffix{font-size:11px;color:var(--muted);flex-shrink:0;}
-
-/* Auto-lock overlay on slider */
-.slider-wrap{position:relative;transition:max-height 0.25s ease,opacity 0.2s ease,margin 0.2s ease;overflow:hidden;max-height:32px;opacity:1;margin-top:0;}
-.slider-wrap.hidden{max-height:0;opacity:0;margin-top:-6px;pointer-events:none;}
-.slider-lock{position:absolute;inset:0;cursor:not-allowed;z-index:2;}
-
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px var(--glow);transition:transform 0.15s,box-shadow 0.15s;}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.35);box-shadow:0 0 16px var(--glow);}
-input[type=range][disabled]{opacity:0.5;cursor:not-allowed;}
-input[type=range][disabled]::-webkit-slider-thumb{cursor:not-allowed;transform:none;}
-
-/* RANGE ROW */
-.range-row{display:flex;align-items:center;gap:6px;margin-top:4px;}
-.range-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;flex-shrink:0;}
-.range-inp{width:48px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--accent2);font-family:'Space Mono',monospace;font-size:12px;padding:3px 5px;outline:none;text-align:center;transition:border-color 0.2s;-moz-appearance:textfield;}
-.range-inp::-webkit-outer-spin-button,.range-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-.range-inp:focus{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(167,139,250,0.2);}
-.range-dash{font-size:11px;color:var(--muted);}
-.range-suffix{font-size:9px;color:var(--muted);}
-.range-bar{height:3px;border-radius:2px;background:var(--border2);position:relative;flex:1;margin:0 2px;}
-.range-bar-fill{position:absolute;height:100%;border-radius:2px;background:var(--accent2);transition:left 0.2s,width 0.2s;}
-.pct-in-range{font-size:9px;padding:1px 6px;border-radius:4px;font-family:'Syne',sans-serif;font-weight:700;flex-shrink:0;}
-.pct-in-range.ok{background:rgba(74,222,128,0.12);color:var(--success);}
-.pct-in-range.warn{background:rgba(255,107,138,0.12);color:var(--danger);}
-
-.del-btn{background:none;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;line-height:1;align-self:center;}
-.del-btn:hover{border-color:var(--danger);color:var(--danger);background:rgba(255,100,100,0.07);}
-
-/* BUTTONS */
-.ctrl-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;}
-.btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;border-radius:10px;padding:10px 18px;letter-spacing:0.04em;transition:all 0.2s;text-transform:uppercase;border:none;}
-.btn-add{background:var(--accent);color:#000;box-shadow:0 4px 20px var(--glow);}
-.btn-add:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 6px 28px var(--glow);}
-.btn-outline{background:none;border:1px solid var(--border2);color:var(--text);}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:rgba(255,255,255,0.03);}
-.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted);}
-.btn-ghost:hover{border-color:var(--danger);color:var(--danger);}
-.btn-auto{background:none;border:1px solid var(--border2);color:var(--accent2);}
-.btn-auto:hover{border-color:var(--accent2);background:rgba(167,139,250,0.08);}
-
-/* RESULT */
-.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
-.result-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
-.pct-badge{font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;font-family:'Syne',sans-serif;transition:all 0.3s;}
-.pct-badge.ok{background:rgba(74,222,128,0.15);color:var(--success);border:1px solid rgba(74,222,128,0.3);}
-.pct-badge.bad{background:rgba(255,107,138,0.12);color:var(--danger);border:1px solid rgba(255,107,138,0.3);}
-
-/* ---- LIQUID BAR ---- */
-.tank-wrap{margin-bottom:1.25rem;position:relative;}
-.tank-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);letter-spacing:0.06em;margin-bottom:4px;font-family:'Syne',sans-serif;}
-.tank{border-radius:14px;overflow:hidden;position:relative;height:76px;background:var(--surface2);border:1px solid var(--border);display:flex;}
-
-/* filled segments */
-.tank-seg{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  transition:width 0.5s cubic-bezier(.34,1,.64,1);min-width:0;flex-shrink:0;cursor:default;}
-.tank-seg-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,0.93);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px;position:relative;z-index:4;
-  pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,0.7);}
-
-/* liquid segment top highlight — no animation, no jitter */
-.liq-wave{display:none;}
-
-/* gloss overlay on filled segments */
-.tank-seg::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,0.12) 0%,transparent 55%);
-  pointer-events:none;z-index:1;}
-
-/* tank segment label — bolder, readable */
-.tank-seg-label{
-  font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
-  color:#fff;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  padding:0 10px;position:relative;z-index:4;pointer-events:none;
-  letter-spacing:0.04em;
-  text-shadow:0 1px 8px rgba(0,0,0,0.8),0 0 20px rgba(0,0,0,0.5);
-  display:flex;flex-direction:column;align-items:center;gap:1px;}
-.seg-lbl-name{font-size:11px;font-weight:800;letter-spacing:0.04em;}
-.seg-lbl-mb{font-size:10px;font-weight:700;opacity:0.85;letter-spacing:0.02em;}
-.seg-lbl-pct{font-size:13px;font-weight:800;letter-spacing:-0.01em;}
-
-/* bubbles */
-.liq-bub{position:absolute;border-radius:50%;background:rgba(255,255,255,0.28);pointer-events:none;z-index:3;
-  animation:lbrise linear infinite;}
-@keyframes lbrise{0%{transform:translateY(0) scale(0.6);opacity:0;}15%{opacity:0.9;}80%{opacity:0.5;}
-  100%{transform:translateY(-200%) scale(1.1);opacity:0;}}
-
-/* shimmer */
-.liq-shim{position:absolute;top:0;left:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent);
-  animation:lshim 4s ease-in-out infinite;z-index:5;pointer-events:none;will-change:transform;}
-@keyframes lshim{0%{transform:translateX(-100%);}100%{transform:translateX(300%);}}
-
-/* tooltip */
-.tank-tip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
-  background:var(--surface);border:1px solid var(--border2);border-radius:9px;padding:7px 11px;
-  font-size:11px;white-space:nowrap;opacity:0;transition:opacity 0.18s;z-index:30;
-  pointer-events:none;color:var(--text);box-shadow:0 6px 24px rgba(0,0,0,0.5);}
-.tank-seg:hover .tank-tip{opacity:1;}
-
-/* EMPTY zone */
-.tank-empty{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  transition:flex 0.5s cubic-bezier(.34,1,.64,1);min-width:0;}
-.tank-empty-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:2px;}
-.tank-empty-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;color:var(--muted);
-  letter-spacing:0.1em;text-transform:uppercase;}
-.tank-empty-mb{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--muted);}
-/* dust particles in empty zone */
-.dust{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--muted);opacity:0;
-  animation:dustfloat linear infinite;}
-@keyframes dustfloat{0%{opacity:0;transform:translateY(30px) scale(0.5);}20%{opacity:0.4;}
-  80%{opacity:0.2;}100%{opacity:0;transform:translateY(-30px) scale(1.5);}}
-/* fill-edge glow */
-.fill-edge{position:absolute;right:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,transparent,rgba(255,255,255,0.5),transparent);
-  animation:edgepulse 2s ease-in-out infinite;z-index:6;}
-@keyframes edgepulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
-
-/* scale ticks */
-.tank-ticks{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;}
-.tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.06);}
-.tick-lbl{position:absolute;bottom:3px;font-size:7px;color:rgba(255,255,255,0.18);
-  font-family:'Space Mono',monospace;transform:translateX(-50%);}
-
-.mb-summary{display:flex;gap:6px;align-items:center;font-size:10px;color:var(--muted);
-  font-family:'Syne',sans-serif;flex-wrap:wrap;margin-bottom:10px;}
-.mb-filled{font-size:14px;font-weight:700;color:var(--accent);}
-.mb-sep{color:var(--border2);}
-.mb-total{color:var(--muted);}
-.mb-remaining{font-size:11px;padding:2px 8px;border-radius:10px;
-  background:rgba(255,107,138,0.1);color:var(--danger);border:1px solid rgba(255,107,138,0.2);}
-.mb-full-badge{font-size:11px;padding:2px 10px;border-radius:10px;
-  background:rgba(74,222,128,0.12);color:var(--success);border:1px solid rgba(74,222,128,0.25);}
-
-.units-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;}
-.unit-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;transition:border-color 0.2s,transform 0.15s;}
-.unit-card:hover{border-color:var(--border2);transform:scale(1.025);}
-.uc-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex-shrink:0;}
-.uc-name{font-size:11px;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;overflow:hidden;}
-.uc-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.uc-val{font-size:19px;font-weight:700;color:var(--accent);font-family:'Syne',sans-serif;}
-.uc-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.5;}
-
-/* SAVED */
-.saved-empty{font-size:12px;color:var(--muted);font-style:italic;padding:4px 0;}
-.saved-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;transition:border-color 0.15s;margin-bottom:8px;}
-.saved-item:hover{border-color:var(--border2);}
-.si-info{flex:1;overflow:hidden;}
-.si-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;}
-.si-desc{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.si-load{background:none;border:1px solid var(--border2);border-radius:7px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--muted);padding:5px 11px;letter-spacing:0.06em;transition:all 0.15s;text-transform:uppercase;cursor:pointer;}
-.si-load:hover{border-color:var(--accent);color:var(--accent);}
-.si-del{background:none;border:none;color:var(--muted);font-size:18px;padding:4px;transition:color 0.15s;line-height:1;cursor:pointer;}
-.si-del:hover{color:var(--danger);}
-.save-row{display:flex;gap:8px;align-items:center;margin-top:0.75rem;}
-.save-inp{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:8px 12px;outline:none;transition:border-color 0.2s;}
-.save-inp:focus{border-color:var(--accent);}
-.save-inp::placeholder{color:var(--muted);}
-.divider{height:1px;background:var(--border);margin:0.75rem 0;}
-.notice{font-size:10px;color:var(--muted);text-align:center;padding-top:1rem;letter-spacing:0.05em;border-top:1px solid var(--border);}
-
-/* Segment gradient fills */
-.g0{background:linear-gradient(90deg,#2a54be,#5535be);}
-.g1{background:linear-gradient(90deg,#b85a0e,#b5411a);}
-.g2{background:linear-gradient(90deg,#b02858,#921530);}
-.g3{background:linear-gradient(90deg,#0e7038,#145e1e);}
-.g4{background:linear-gradient(90deg,#6838b0,#4a2298);}
-.g5{background:linear-gradient(90deg,#a87016,#886010);}
-.g6{background:linear-gradient(90deg,#0e6088,#0a4870);}
-.g7{background:linear-gradient(90deg,#a82468,#882050);}
-
-@media (max-width:700px){
-  .ing-card{grid-template-columns:1fr;gap:12px;padding:14px;}
-  .pct-wrap{width:100%;}
-  .pct-top{width:100%;}
-  input[type=range]{width:100%;}
-  .ing-unit-wrap,.ing-name-wrap{width:100%;}
-  .ing-unit-inp,.ing-name-inp{width:100%;}
-  .del-btn{width:100%;height:42px;}
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{background:#0f0f0f;min-height:100vh;color:#fff;padding-bottom:2rem}
+.topbar{background:#0f0f0f;border-bottom:1px solid #272727;padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:56px;position:sticky;top:0;z-index:10}
+.logo{font-size:20px;font-weight:500;color:#fff;letter-spacing:-0.5px;display:flex;align-items:center;gap:6px}
+.logo span{color:#e53935}
+.search-wrap{flex:1;max-width:480px;display:flex;gap:0}
+.search-wrap input{flex:1;background:#121212;border:1px solid #303030;border-right:none;border-radius:20px 0 0 20px;padding:8px 16px;color:#fff;font-size:14px;outline:none}
+.search-wrap input::placeholder{color:#717171}
+.search-btn{background:#272727;border:1px solid #303030;border-left:none;border-radius:0 20px 20px 0;padding:0 18px;color:#fff;cursor:pointer;font-size:16px}
+.avatar{width:32px;height:32px;border-radius:50%;background:#e53935;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;margin-left:auto}
+.hero{padding:1.5rem 1.5rem 0.5rem}
+.section-title{font-size:18px;font-weight:500;margin-bottom:1rem;color:#fff}
+.featured{display:grid;grid-template-columns:1fr 340px;gap:1rem;margin-bottom:2rem}
+.main-video{position:relative;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9;cursor:pointer}
+.main-video img{width:100%;height:100%;object-fit:cover;opacity:0.85}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;background:rgba(0,0,0,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;transition:background 0.2s}
+.main-video:hover .play-btn{background:rgba(229,57,53,0.85)}
+.video-info{margin-top:10px}
+.video-info .vtitle{font-size:16px;font-weight:500;color:#fff;margin-bottom:4px}
+.video-info .vmeta{font-size:13px;color:#aaa}
+.sidebar-list{display:flex;flex-direction:column;gap:10px}
+.sv{display:flex;gap:10px;cursor:pointer;padding:6px;border-radius:8px;transition:background 0.15s}
+.sv:hover{background:#1a1a1a}
+.sv-thumb{width:120px;min-width:120px;aspect-ratio:16/9;background:#222;border-radius:6px;overflow:hidden;position:relative}
+.sv-thumb img{width:100%;height:100%;object-fit:cover}
+.sv-dur{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.8);font-size:11px;padding:1px 4px;border-radius:3px;color:#fff}
+.sv-info .svt{font-size:13px;font-weight:500;color:#fff;line-height:1.3;margin-bottom:3px}
+.sv-info .svm{font-size:12px;color:#aaa}
+.grid{padding:0 1.5rem}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem}
+.vcard{cursor:pointer}
+.vcard:hover .vc-thumb img{transform:scale(1.03)}
+.vc-thumb{aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#1a1a1a;position:relative}
+.vc-thumb img{width:100%;height:100%;object-fit:cover;transition:transform 0.25s}
+.vc-dur{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.82);font-size:11px;padding:2px 5px;border-radius:3px;color:#fff}
+.vc-info{margin-top:8px;display:flex;gap:8px}
+.vc-avatar{width:32px;height:32px;min-width:32px;border-radius:50%;overflow:hidden}
+.vc-avatar img{width:100%;height:100%;object-fit:cover}
+.vc-meta .vct{font-size:14px;font-weight:500;color:#fff;line-height:1.3;margin-bottom:2px}
+.vc-meta .vcm{font-size:12px;color:#aaa}
+.cats{display:flex;gap:8px;margin-bottom:1.2rem;flex-wrap:wrap}
+.cat{background:#272727;border:1px solid #303030;border-radius:20px;padding:6px 14px;font-size:13px;color:#fff;cursor:pointer;transition:background 0.15s}
+.cat:hover,.cat.active{background:#e53935;border-color:#e53935}
 </style>
-</head>
-<body class="theme-obsidian">
-<div class="bg-orb bg-orb1"></div>
-<div class="bg-orb bg-orb2"></div>
 
-<div class="header">
-  <div class="header-left">
-    <h1 id="h-title">Калькулятор пропорций</h1>
-    <p class="sub" id="h-sub">
-      Распределение объёма · Cookie ·
-      by <span id="mc-name">Neon4301</span>
-      <img id="mc-head" alt="head">
-      <a href="https://github.com/TerraFirmaGreg-Team" target="_blank" rel="noopener" class="gh-link" title="TerraFirmaGreg-Team on GitHub">
-        <svg class="gh-icon" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        TerraFirmaGreg-Team
-      </a>
-    </p>
-  </div>
-  <div class="header-controls">
-    <div class="theme-dots">
-      <div class="tdot tdot-obsidian active" data-t="obsidian" title="Obsidian" onclick="setTheme('obsidian',this)"></div>
-      <div class="tdot tdot-forge" data-t="forge" title="Forge" onclick="setTheme('forge',this)"></div>
-      <div class="tdot tdot-arctic" data-t="arctic" title="Arctic" onclick="setTheme('arctic',this)"></div>
-      <div class="tdot tdot-poison" data-t="poison" title="Poison" onclick="setTheme('poison',this)"></div>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo"><span>▶</span> StreamNow</div>
+    <div class="search-wrap">
+      <input type="text" placeholder="Поиск видео...">
+      <button class="search-btn">🔍</button>
     </div>
-    <button class="lang-btn" onclick="toggleLang()">
-      <span class="lseg active" id="ls-ru">RU</span>
-      <span style="color:var(--muted)">/</span>
-      <span class="lseg" id="ls-en">EN</span>
-    </button>
+    <div class="avatar">ВЫ</div>
+  </div>
+
+  <div class="hero">
+    <div class="section-title">Рекомендуем</div>
+    <div class="featured">
+      <div>
+        <div class="main-video">
+          <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="featured">
+          <div class="play-btn">▶</div>
+        </div>
+        <div class="video-info">
+          <div class="vtitle">Rick Astley — Never Gonna Give You Up (Official Video)</div>
+          <div class="vmeta">Rick Astley · 1,4 млрд просмотров · 37 лет назад</div>
+        </div>
+      </div>
+      <div class="sidebar-list">
+        <div class="sv">
+          <div class="sv-thumb"><img src="https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg" alt=""><div class="sv-dur">4:13</div></div>
+          <div class="sv-info"><div class="svt">PSY — Gangnam Style</div><div class="svm">PSYTOWN · 5 млрд</div></div>
+        </div>
+        <div class="sv">
+          <div class="sv-thumb"><img src="https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg" alt=""><div class="sv-dur">3:27</div></div>
+          <div class="sv-info"><div class="svt">Luis Fonsi — Despacito ft. Daddy Yankee</div><div class="svm">Luis Fonsi · 8,3 млрд</div></div>
+        </div>
+        <div class="sv">
+          <div class="sv-thumb"><img src="https://img.youtube.com/vi/JGwWNGJdvx8/mqdefault.jpg" alt=""><div class="sv-dur">4:24</div></div>
+          <div class="sv-info"><div class="svt">Ed Sheeran — Shape of You</div><div class="svm">Ed Sheeran · 6,1 млрд</div></div>
+        </div>
+        <div class="sv">
+          <div class="sv-thumb"><img src="https://img.youtube.com/vi/RgKAFK5djSk/mqdefault.jpg" alt=""><div class="sv-dur">3:55</div></div>
+          <div class="sv-info"><div class="svt">Wiz Khalifa — See You Again ft. Charlie Puth</div><div class="svm">Wiz Khalifa · 6 млрд</div></div>
+        </div>
+        <div class="sv">
+          <div class="sv-thumb"><img src="https://img.youtube.com/vi/OPf0YbXqDm0/mqdefault.jpg" alt=""><div class="sv-dur">4:17</div></div>
+          <div class="sv-info"><div class="svt">Mark Ronson — Uptown Funk ft. Bruno Mars</div><div class="svm">Mark Ronson · 5,1 млрд</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="padding:0">
+      <div class="cats">
+        <div class="cat active">Всё</div>
+        <div class="cat">Музыка</div>
+        <div class="cat">Игры</div>
+        <div class="cat">Спорт</div>
+        <div class="cat">Технологии</div>
+        <div class="cat">Кино</div>
+        <div class="cat">Новости</div>
+        <div class="cat">Образование</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="section-title">Популярное сегодня</div>
+    <div class="video-grid">
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg" alt=""><div class="vc-dur">4:13</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/9bZkp7q19f0/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Gangnam Style</div><div class="vcm">PSYTOWN · 5 млрд · 12 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg" alt=""><div class="vc-dur">3:27</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/kJQP7kiw5Fk/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Despacito</div><div class="vcm">Luis Fonsi · 8,3 млрд · 7 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/JGwWNGJdvx8/mqdefault.jpg" alt=""><div class="vc-dur">4:24</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/JGwWNGJdvx8/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Shape of You</div><div class="vcm">Ed Sheeran · 6,1 млрд · 7 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/RgKAFK5djSk/mqdefault.jpg" alt=""><div class="vc-dur">3:55</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/RgKAFK5djSk/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">See You Again</div><div class="vcm">Wiz Khalifa · 6 млрд · 9 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/OPf0YbXqDm0/mqdefault.jpg" alt=""><div class="vc-dur">4:17</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/OPf0YbXqDm0/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Uptown Funk</div><div class="vcm">Mark Ronson · 5,1 млрд · 9 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt=""><div class="vc-dur">3:33</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Never Gonna Give You Up</div><div class="vcm">Rick Astley · 1,4 млрд · 37 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/hT_nvWreIhg/mqdefault.jpg" alt=""><div class="vc-dur">3:56</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/hT_nvWreIhg/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Counting Stars</div><div class="vcm">OneRepublic · 3,8 млрд · 11 лет назад</div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><img src="https://img.youtube.com/vi/YQHsXMglC9A/mqdefault.jpg" alt=""><div class="vc-dur">3:58</div></div>
+        <div class="vc-info">
+          <div class="vc-avatar"><img src="https://img.youtube.com/vi/YQHsXMglC9A/default.jpg" alt=""></div>
+          <div class="vc-meta"><div class="vct">Hello</div><div class="vcm">Adele · 3,5 млрд · 9 лет назад</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<div class="container">
-  <!-- TOTAL -->
-  <div class="card">
-    <div class="card-label" id="lbl-total">Общий объём</div>
-    <div class="total-row">
-      <span class="lbl-text" id="lbl-vol">Объём</span>
-      <input type="number" class="inp" id="totalMB" value="4608" min="1" step="1">
-      <span class="tag">MB</span>
-    </div>
-    <!-- AUTO GLOBAL TOGGLE -->
-    <div class="auto-toggle-row">
-      <span class="auto-toggle-label" id="lbl-auto">Авто</span>
-      <label class="toggle-switch">
-        <input type="checkbox" id="auto-toggle" onchange="onAutoToggle()">
-        <div class="toggle-track"></div>
-      </label>
-      <span class="auto-badge off" id="auto-badge" id="lbl-auto-badge">ВЫКЛ</span>
-      <span class="auto-hint" id="lbl-auto-hint">Авто заполняет % из диапазонов по максимуму</span>
-    </div>
-    <div class="auto-result-panel" id="auto-panel">
-      <div class="auto-result-title" id="lbl-auto-res">Варианты авто-распределения</div>
-      <div class="auto-variants" id="auto-variants"></div>
-    </div>
-  </div>
-
-  <!-- INGREDIENTS -->
-  <div class="card">
-    <div class="card-label" id="lbl-ing-hdr">Ингредиенты / Сплавы</div>
-    <div class="ing-list" id="ing-list"></div>
-    <div class="ctrl-row">
-      <button class="btn btn-add" id="btn-add" onclick="addIng()">+ Добавить</button>
-      <button class="btn btn-outline" id="btn-dist" onclick="distribute()">Равно</button>
-      <button class="btn btn-ghost" id="btn-clear" onclick="clearAll()">Очистить</button>
-    </div>
-  </div>
-
-  <!-- RESULT -->
-  <div class="card">
-    <div class="result-header">
-      <span class="result-title" id="lbl-vis">Визуализация</span>
-      <span class="pct-badge bad" id="pct-sum">0%</span>
-    </div>
-    <!-- MB summary row -->
-    <div class="mb-summary" id="mb-summary"></div>
-    <!-- Liquid tank -->
-    <div class="tank-wrap">
-      <div class="tank-labels" id="tank-labels"></div>
-      <div class="tank" id="tank">
-        <!-- segments injected by JS -->
-        <div class="tank-empty" id="tank-empty">
-          <div class="fill-edge" id="fill-edge"></div>
-          <div class="tank-empty-inner" id="tank-empty-inner">
-            <span class="tank-empty-lbl">пусто</span>
-            <span class="tank-empty-mb" id="tank-empty-mb">— MB</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="units-grid" id="units-grid"></div>
-  </div>
-
-  <!-- SAVED -->
-  <div class="card">
-    <div class="card-label" id="lbl-saved-hdr">Сохранённые конфигурации</div>
-    <div id="saved-list"></div>
-    <div class="divider"></div>
-    <div class="save-row">
-      <input type="text" class="save-inp" id="save-name" placeholder="Название...">
-      <button class="btn btn-add" id="btn-save" onclick="saveConf()">Сохранить</button>
-    </div>
-  </div>
-
-  <p class="notice" id="lbl-notice">Данные сохраняются в Cookie · 365 дней</p>
-</div>
-
-<script>
-function loadMinecraftHead(){
-  const nick='Neon4301';
-  const img=document.getElementById('mc-head');
-  img.src=`https://mc-heads.net/avatar/${nick}/64?${Date.now()}`;
-  img.onerror=()=>{console.warn('Head load error');};
-}
-loadMinecraftHead();
-
-/* ===== i18n ===== */
-const TR={
-  ru:{title:'Калькулятор пропорций',sub:'Распределение объёма · Cookie',lbl_total:'Общий объём',lbl_vol:'Объём',lbl_ing_hdr:'Ингредиенты / Сплавы',lbl_vis:'Визуализация',lbl_saved_hdr:'Сохранённые конфигурации',lbl_notice:'Данные сохраняются в Cookie · 365 дней',btn_add:'+ Добавить',btn_dist:'Равно',btn_clear:'Очистить',btn_save:'Сохранить',btn_load:'Загрузить',ing_lbl:'Ингредиент',unit_lbl:'Ед. (МБ)',pct_lbl:'%',range_lbl:'Диапазон',ph_name:'Название...',ph_save:'Название...',empty:'Нет сохранённых конфигураций',confirm_clear:'Очистить все ингредиенты?',pcs:'шт',ok:'100% ✓',auto_on:'ВКЛ',auto_off:'ВЫКЛ',auto_hint:'Авто заполняет % из диапазонов по максимуму',auto_res:'Варианты авто-распределения',auto_lbl:'Авто',var1_lbl:'Вариант 1 · Приоритет',var2_lbl:'Вариант 2 · Максимум'},
-  en:{title:'Proportion Calculator',sub:'Volume Distribution · Cookie',lbl_total:'Total Volume',lbl_vol:'Volume',lbl_ing_hdr:'Ingredients / Alloys',lbl_vis:'Visualization',lbl_saved_hdr:'Saved Configurations',lbl_notice:'Data stored in Cookie · 365 days',btn_add:'+ Add',btn_dist:'Evenly',btn_clear:'Clear',btn_save:'Save',btn_load:'Load',ing_lbl:'Ingredient',unit_lbl:'Unit (MB)',pct_lbl:'%',range_lbl:'Range',ph_name:'Name...',ph_save:'Config name...',empty:'No saved configurations',confirm_clear:'Clear all ingredients?',pcs:'pcs',ok:'100% ✓',auto_on:'ON',auto_off:'OFF',auto_hint:'Auto fills % from ranges up to max',auto_res:'Auto-distribution variants',auto_lbl:'Auto',var1_lbl:'Variant 1 · Priority',var2_lbl:'Variant 2 · Maximum'}
-};
-let lang='ru';
-function t(k){return TR[lang][k]||k;}
-
-function applyLang(){
-  const ids={'h-title':'title','lbl-total':'lbl_total','lbl-vol':'lbl_vol','lbl-ing-hdr':'lbl_ing_hdr','lbl-vis':'lbl_vis','lbl-saved-hdr':'lbl_saved_hdr','lbl-notice':'lbl_notice','btn-add':'btn_add','btn-dist':'btn_dist','btn-clear':'btn_clear','btn-save':'btn_save','lbl-auto':'auto_lbl','lbl-auto-res':'auto_res','lbl-auto-hint':'auto_hint'};
-  for(const[id,key]of Object.entries(ids)){const el=document.getElementById(id);if(el)el.textContent=t(key);}
-  document.getElementById('save-name').placeholder=t('ph_save');
-  const autoOn=document.getElementById('auto-toggle').checked;
-  const badge=document.getElementById('auto-badge');
-  badge.textContent=autoOn?t('auto_on'):t('auto_off');
-  document.querySelectorAll('.ing-name-lbl').forEach(el=>el.textContent=t('ing_lbl'));
-  document.querySelectorAll('.ing-unit-lbl').forEach(el=>el.textContent=t('unit_lbl'));
-  document.querySelectorAll('.ing-range-lbl').forEach(el=>el.textContent=t('range_lbl'));
-  document.querySelectorAll('.ing-name-inp').forEach(el=>el.placeholder=t('ph_name'));
-  renderSaved();updateResult();
-  if(document.getElementById('auto-toggle').checked) runAuto();
-}
-function toggleLang(){
-  lang=lang==='ru'?'en':'ru';
-  document.getElementById('ls-ru').classList.toggle('active',lang==='ru');
-  document.getElementById('ls-en').classList.toggle('active',lang==='en');
-  document.documentElement.lang=lang;
-  applyLang();
-}
-
-/* ===== THEME ===== */
-function setTheme(name,el){
-  document.body.className='theme-'+name;
-  document.querySelectorAll('.tdot').forEach(d=>d.classList.remove('active'));
-  el.classList.add('active');
-  setCookie('prop_theme',name,365);
-}
-
-/* ===== COOKIE / STORAGE ===== */
-function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*864e5);document.cookie=`${n}=${encodeURIComponent(v)};expires=${e.toUTCString()};path=/`;}
-function getCookie(n){const m=document.cookie.match('(?:^|; )'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'=([^;]*)');return m?decodeURIComponent(m[1]):null;}
-function getSaved(){try{return JSON.parse(localStorage.getItem('prop_cfgs4')||'[]');}catch{return [];}}
-function setSaved(arr){localStorage.setItem('prop_cfgs4',JSON.stringify(arr));}
-
-/* ===== DATA ===== */
-let ings=[],nid=1;
-let autoMode=false;
-const GRAD=['g0','g1','g2','g3','g4','g5','g6','g7'];
-const HEX=['#5c8eff','#ff9d1a','#ff6b8a','#22c55e','#a78bfa','#f59e0b','#06b6d4','#ec4899'];
-
-/* ===== AUTO MODE ===== */
-function onAutoToggle(){
-  autoMode=document.getElementById('auto-toggle').checked;
-  const badge=document.getElementById('auto-badge');
-  badge.textContent=autoMode?t('auto_on'):t('auto_off');
-  badge.className='auto-badge '+(autoMode?'on':'off');
-  const panel=document.getElementById('auto-panel');
-  panel.classList.toggle('visible',autoMode);
-  renderIngs(); // re-render to lock/unlock controls
-  if(autoMode) runAuto();
-  else updateResult();
-}
-
-/*
-  AUTO ALGORITHM
-  =============
-  Each ingredient has: unit (MB per piece), pctMin, pctMax, and totalMB (global).
-  
-  Goal: pick counts of each ingredient (whole pieces) so total MB ≤ totalMB.
-  
-  Variant 1 (Priority — "чистые пачки"):
-    For each ingredient, use the maximum WHOLE number of pieces
-    that fits within its min% * totalMB ... max% * totalMB range.
-    Prefer filling as many as possible without going over totalMB total.
-    Strategy: greedily assign min-pct floor counts first, then add pieces
-    proportionally from the "leftover" budget.
-  
-  Variant 2 (Maximum — fill to totalMB):
-    After V1 base, distribute remaining MB to ingredients in proportion
-    to their max ranges until totalMB is reached.
-*/
-function runAuto(){
-  const totalMB=parseInt(document.getElementById('totalMB').value)||1000;
-  if(!ings.length){document.getElementById('auto-variants').innerHTML='';return;}
-
-  // Compute variant 1: priority (clean whole-unit fills within range)
-  const v1=computeAutoVariant(totalMB,false);
-  // Compute variant 2: maximum (fill up to totalMB)
-  const v2=computeAutoVariant(totalMB,true);
-
-  renderAutoVariants(v1,v2,totalMB);
-}
-
-/* -------------------------------------------------------
-   computeV1: приоритетный вариант — целые пачки в диапазоне
-   Возвращает {slots, totalUsed}
-------------------------------------------------------- */
-function computeV1Slots(totalMB){
-  const slots=ings.map(ing=>{
-    const minPcs=Math.ceil(totalMB*(ing.pctMin/100)/ing.unit);
-    const maxPcs=Math.floor(totalMB*(ing.pctMax/100)/ing.unit);
-    return {ing, minPcs:Math.max(0,minPcs), maxPcs:Math.max(0,maxPcs), pcs:0};
-  });
-
-  // Фаза 1: минимальные пачки каждому
-  slots.forEach(sl=>sl.pcs=sl.minPcs);
-  let used=slots.reduce((s,sl)=>s+sl.pcs*sl.ing.unit,0);
-  if(used>totalMB){slots.forEach(sl=>{sl.pcs=0;});used=0;}
-
-  // Фаза 2: добавляем пачки до maxPcs (по убыванию "пространства роста")
-  const sorted=[...slots].sort((a,b)=>(b.maxPcs-b.minPcs)-(a.maxPcs-a.minPcs));
-  for(const sl of sorted){
-    while(sl.pcs<sl.maxPcs&&used+sl.ing.unit<=totalMB){
-      sl.pcs++;
-      used+=sl.ing.unit;
-    }
-  }
-  return {slots, totalUsed:used};
-}
-
-/* -------------------------------------------------------
-   computeAutoVariant:
-   fillToMax=false → V1 (приоритет, чистые пачки)
-   fillToMax=true  → V2 (полный объём: V1 + добить одним видом)
-------------------------------------------------------- */
-function computeAutoVariant(totalMB,fillToMax){
-  const {slots,totalUsed:usedV1}=computeV1Slots(totalMB);
-  let used=usedV1;
-  let extraMB=0;
-  let extraIngId=null;
-  let extraPcs=0;
-
-  if(fillToMax){
-    const remaining=totalMB-used;
-    if(remaining>0){
-      // V2 добивает некратный остаток напрямую в MB к одному материалу.
-      // Ищем материал у которого (текущий MB + remaining) не выходит за maxPct.
-      // Берём тот, у кого больше всего "запаса" до maxPct.
-      let best=null, bestSlack=0;
-      for(const sl of slots){
-        const maxMB=totalMB*(sl.ing.pctMax/100);
-        const curMB=sl.pcs*sl.ing.unit;
-        const slack=maxMB-curMB; // сколько MB ещё можно добавить
-        if(slack>=remaining&&slack>bestSlack){
-          best=sl; bestSlack=slack;
-        }
-      }
-      // Если ни один не может вместить весь остаток — берём того у кого максимальный запас
-      if(!best){
-        for(const sl of slots){
-          const maxMB=totalMB*(sl.ing.pctMax/100);
-          const curMB=sl.pcs*sl.ing.unit;
-          const slack=maxMB-curMB;
-          if(slack>bestSlack){best=sl;bestSlack=slack;}
-        }
-      }
-      if(best&&bestSlack>0){
-        const addMB=Math.min(remaining,bestSlack);
-        extraMB=addMB;
-        extraIngId=best.ing.id;
-        used+=addMB;
-      }
-    }
-  }
-
-  const packsTotal=slots.reduce((s,sl)=>s+sl.pcs*sl.ing.unit,0);
-  const realTotal=packsTotal+(extraIngId?extraMB:0);
-  const result=slots.map(sl=>({
-    id:sl.ing.id,
-    name:sl.ing.name,
-    pcs:sl.pcs,
-    mb:sl.pcs*sl.ing.unit + (fillToMax&&sl.ing.id===extraIngId?extraMB:0),
-    pct:totalMB>0?Math.round((sl.pcs*sl.ing.unit+(fillToMax&&sl.ing.id===extraIngId?extraMB:0))/totalMB*100):0,
-    isExtra:fillToMax&&sl.ing.id===extraIngId,
-    extraMB:fillToMax&&sl.ing.id===extraIngId?extraMB:0,
-    extraPcs:0
-  }));
-  result.push({_total:realTotal, _remaining:totalMB-realTotal});
-  return result;
-}
-
-function applyAutoResult(variant,btn){
-  const items=variant.filter(v=>v.id!==undefined);
-  items.forEach(v=>{
-    const ing=ings.find(i=>i.id===v.id);
-    if(ing){
-      ing.pct=v.pct;
-      const pr=document.getElementById('pr-'+ing.id);
-      const ni=document.getElementById('pni-'+ing.id);
-      if(pr) pr.value=ing.pct;
-      if(ni) ni.value=ing.pct;
-    }
-  });
-  document.querySelectorAll('.auto-var-btn').forEach(b=>b.classList.remove('selected'));
-  if(btn) btn.classList.add('selected');
-  updateResult();
-}
-
-function renderAutoVariants(v1,v2,totalMB){
-  const container=document.getElementById('auto-variants');
-
-  const makeCard=(variant,label,isV2)=>{
-    const items=variant.filter(v=>v.id!==undefined);
-    const meta=variant.find(v=>v._total!==undefined);
-    const total=meta?meta._total:0;
-    const remaining=meta?meta._remaining:totalMB-total;
-
-    const detail=items.map(v=>{
-      const name=esc(v.name||(lang==='ru'?'Ингр.':'Ing.'));
-      let line=`${name}: ${v.pcs} ${t('pcs')} = ${v.mb} MB (${v.pct}%)`;
-      if(isV2&&v.isExtra&&v.extraMB>0){
-        const ing=ings.find(i=>i.id===v.id);
-        const inRange=ing&&v.pct>=ing.pctMin&&v.pct<=ing.pctMax;
-        line+=`&nbsp;<span style="color:var(--success);font-size:9px">+${v.extraMB} MB${inRange?' ✓':' ⚠'}</span>`;
-      }
-      return line;
-    }).join('<br>');
-
-    const isFull=remaining===0;
-    const totalColor=isFull?'var(--success)':'var(--accent)';
-    const remainTag=remaining>0
-      ?`<span style="color:var(--danger);font-size:9px;margin-left:6px">−${remaining} MB</span>`
-      :`<span style="color:var(--success);font-size:9px;margin-left:6px">✓ FULL</span>`;
-
-    const btn=document.createElement('button');
-    btn.className='auto-var-btn';
-    btn.innerHTML=`
-      <div class="var-label">${label}</div>
-      <div class="var-total" style="color:${totalColor}">${total} / ${totalMB} MB${remainTag}</div>
-      <div class="var-detail">${detail}</div>`;
-    btn.onclick=function(){applyAutoResult(variant,this);};
-    return btn;
-  };
-
-  container.innerHTML='';
-  container.appendChild(makeCard(v1,t('var1_lbl'),false));
-  container.appendChild(makeCard(v2,t('var2_lbl'),true));
-}
-
-/* ===== INGREDIENT CRUD ===== */
-function addIng(name='',pct=10,unit=144,pctMin=0,pctMax=100){
-  ings.push({id:nid++,name,pct,unit,pctMin,pctMax});
-  renderIngs();syncTankDom();updateResult();
-  if(autoMode) runAuto();
-}
-function removeIng(id){
-  ings=ings.filter(i=>i.id!==id);
-  renderIngs();syncTankDom();updateResult();
-  if(autoMode) runAuto();
-}
-function updName(id,v){const i=ings.find(x=>x.id===id);if(i){i.name=v;updateResult();if(autoMode)runAuto();}}
-function updUnit(id,v){const i=ings.find(x=>x.id===id);if(i){i.unit=Math.max(1,parseInt(v)||1);updateResult();if(autoMode)runAuto();}}
-function updRangeMin(id,v){
-  const i=ings.find(x=>x.id===id);if(!i)return;
-  i.pctMin=Math.max(0,Math.min(100,parseInt(v)||0));
-  if(i.pctMin>i.pctMax) i.pctMax=i.pctMin;
-  updateRangeBar(id);updateResult();if(autoMode)runAuto();
-}
-function updRangeMax(id,v){
-  const i=ings.find(x=>x.id===id);if(!i)return;
-  i.pctMax=Math.max(0,Math.min(100,parseInt(v)||0));
-  if(i.pctMax<i.pctMin) i.pctMin=i.pctMax;
-  updateRangeBar(id);updateResult();if(autoMode)runAuto();
-}
-function updateRangeBar(id){
-  const i=ings.find(x=>x.id===id);if(!i)return;
-  const fill=document.getElementById('rbf-'+id);
-  if(fill){
-    fill.style.left=i.pctMin+'%';
-    fill.style.width=(i.pctMax-i.pctMin)+'%';
-  }
-  // update range min/max inputs in case they were clamped
-  const rmin=document.getElementById('rmin-'+id);
-  const rmax=document.getElementById('rmax-'+id);
-  if(rmin) rmin.value=i.pctMin;
-  if(rmax) rmax.value=i.pctMax;
-  // update in-range indicator
-  const indicator=document.getElementById('pir-'+id);
-  if(indicator){
-    const inRange=i.pct>=i.pctMin&&i.pct<=i.pctMax;
-    indicator.className='pct-in-range '+(inRange?'ok':'warn');
-    indicator.textContent=inRange?'✓':'!';
-    indicator.title=inRange?'В диапазоне':'Вне диапазона';
-  }
-}
-
-function distribute(){
-  if(!ings.length)return;
-  const e=Math.floor(100/ings.length),r=100-e*ings.length;
-  ings.forEach((i,idx)=>{i.pct=e+(idx===0?r:0);});
-  renderIngs();updateResult();
-  if(autoMode) runAuto();
-}
-function clearAll(){
-  if(!confirm(t('confirm_clear')))return;
-  ings=[];renderIngs();syncTankDom();updateResult();
-  if(autoMode) runAuto();
-}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-/* ===== RENDER INGREDIENT CARDS ===== */
-function renderIngs(){
-  const locked=autoMode;
-  document.getElementById('ing-list').innerHTML=ings.map((ing)=>{
-    const inRange=ing.pct>=ing.pctMin&&ing.pct<=ing.pctMax;
-    return `
-    <div class="ing-card" id="ic-${ing.id}">
-      <div class="ing-name-wrap">
-        <span class="ing-name-lbl">${t('ing_lbl')}</span>
-        <input class="ing-name-inp" value="${esc(ing.name)}" placeholder="${t('ph_name')}" oninput="updName(${ing.id},this.value)">
-      </div>
-      <div class="ing-unit-wrap">
-        <span class="ing-unit-lbl">${t('unit_lbl')}</span>
-        <input type="number" class="ing-unit-inp" value="${ing.unit}" min="1" step="1" oninput="updUnit(${ing.id},this.value)">
-      </div>
-      <div class="pct-wrap">
-        <div class="pct-top">
-          <span class="pct-lbl-small">${t('pct_lbl')}</span>
-          <div class="pct-spacer"></div>
-          <input type="number" class="pct-num-inp" id="pni-${ing.id}"
-            value="${ing.pct}" min="0" max="100" step="1"
-            ${locked?'disabled title="Управляется авто-режимом"':''}
-            oninput="handleNumInput(${ing.id},this)"
-            onblur="handleNumBlur(${ing.id},this)">
-          <span class="pct-suffix">%</span>
-          <span class="pct-in-range ${inRange?'ok':'warn'}" id="pir-${ing.id}" title="${inRange?'В диапазоне':'Вне диапазона'}">${inRange?'✓':'!'}</span>
-        </div>
-        <div class="slider-wrap${locked?' hidden':''}">
-          <input type="range" id="pr-${ing.id}" min="0" max="100" step="1" value="${ing.pct}"
-            ${locked?'disabled':''}
-            oninput="handleSlider(${ing.id},this.value)">
-        </div>
-        <div class="range-row">
-          <span class="ing-range-lbl range-lbl">${t('range_lbl')}</span>
-          <input type="number" class="range-inp" id="rmin-${ing.id}" value="${ing.pctMin}" min="0" max="100" step="1"
-            onblur="updRangeMin(${ing.id},this.value)" title="Минимум %">
-          <span class="range-dash">—</span>
-          <input type="number" class="range-inp" id="rmax-${ing.id}" value="${ing.pctMax}" min="0" max="100" step="1"
-            onblur="updRangeMax(${ing.id},this.value)" title="Максимум %">
-          <span class="range-suffix">%</span>
-          <div class="range-bar">
-            <div class="range-bar-fill" id="rbf-${ing.id}" style="left:${ing.pctMin}%;width:${ing.pctMax-ing.pctMin}%"></div>
-          </div>
-        </div>
-      </div>
-      <button class="del-btn" onclick="removeIng(${ing.id})">×</button>
-    </div>`;
-  }).join('');
-}
-
-/* Slider moved */
-function handleSlider(id,v){
-  if(autoMode) return;
-  const i=ings.find(x=>x.id===id);if(!i)return;
-  i.pct=parseInt(v)||0;
-  const ni=document.getElementById('pni-'+id);
-  if(ni&&document.activeElement!==ni) ni.value=i.pct;
-  updateRangeBar(id);
-  updateResult();
-}
-
-/* Number input typed */
-function handleNumInput(id,el){
-  if(autoMode) return;
-  const raw=parseInt(el.value);
-  if(isNaN(raw))return;
-  const clamped=Math.max(0,Math.min(100,raw));
-  const i=ings.find(x=>x.id===id);if(!i)return;
-  i.pct=clamped;
-  const pr=document.getElementById('pr-'+id);
-  if(pr) pr.value=clamped;
-  updateRangeBar(id);
-  updateResult();
-}
-function handleNumBlur(id,el){
-  if(autoMode) return;
-  const raw=parseInt(el.value)||0;
-  const clamped=Math.max(0,Math.min(100,raw));
-  el.value=clamped;
-  const i=ings.find(x=>x.id===id);if(!i)return;
-  i.pct=clamped;
-  const pr=document.getElementById('pr-'+id);
-  if(pr) pr.value=clamped;
-  updateRangeBar(id);
-  updateResult();
-}
-
-/* ===== LIQUID TANK ===== */
-const SEG_COLORS=[
-  ['#2a54be','#5535be'],['#b85a0e','#b5411a'],['#b02858','#921530'],
-  ['#0e7038','#145e1e'],['#6838b0','#4a2298'],['#a87016','#886010'],
-  ['#0e6088','#0a4870'],['#a82468','#882050']
-];
-
-let tankSegIds=[];
-
-function makeLiqBubbles(count){
-  const frag=document.createDocumentFragment();
-  for(let i=0;i<count;i++){
-    const b=document.createElement('div');
-    b.className='liq-bub';
-    const sz=2+Math.random()*7;
-    b.style.cssText=`width:${sz}px;height:${sz}px;left:${5+Math.random()*88}%;bottom:${Math.random()*30}%;`+
-      `animation-duration:${1.6+Math.random()*2.8}s;animation-delay:-${Math.random()*3}s;`;
-    frag.appendChild(b);
-  }
-  return frag;
-}
-
-function makeDustParticles(count){
-  const frag=document.createDocumentFragment();
-  for(let i=0;i<count;i++){
-    const d=document.createElement('div');
-    d.className='dust';
-    d.style.cssText=`left:${Math.random()*96}%;bottom:${10+Math.random()*70}%;`+
-      `animation-duration:${2+Math.random()*3}s;animation-delay:-${Math.random()*4}s;`+
-      `width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;`;
-    frag.appendChild(d);
-  }
-  return frag;
-}
-
-function syncTankDom(){
-  const tank=document.getElementById('tank');
-  const empty=document.getElementById('tank-empty');
-  const curIds=ings.map(i=>i.id);
-
-  // Remove stale
-  tankSegIds.filter(id=>!curIds.includes(id)).forEach(id=>{
-    const s=document.getElementById('tseg-'+id);if(s)tank.removeChild(s);
-  });
-
-  // Add new, insert before empty zone
-  ings.forEach((ing,idx)=>{
-    if(!document.getElementById('tseg-'+ing.id)){
-      const seg=document.createElement('div');
-      seg.id='tseg-'+ing.id;
-      seg.className='tank-seg';
-      const [c1,c2]=SEG_COLORS[idx%SEG_COLORS.length];
-      seg.style.background=`linear-gradient(135deg,${c1},${c2})`;
-      seg.style.width='0%';
-
-      // wave
-      const wave=document.createElement('div');wave.className='liq-wave';seg.appendChild(wave);
-      // bubbles
-      seg.appendChild(makeLiqBubbles(4+idx));
-      // shimmer
-      const shim=document.createElement('div');shim.className='liq-shim';seg.appendChild(shim);
-      // label
-      const lbl=document.createElement('span');lbl.className='tank-seg-label';lbl.id='tlbl-'+ing.id;seg.appendChild(lbl);
-      // tooltip
-      const tip=document.createElement('div');tip.className='tank-tip';tip.id='ttip-'+ing.id;seg.appendChild(tip);
-
-      tank.insertBefore(seg,empty);
-    }
-  });
-
-  // Reorder to match ings order
-  ings.forEach(ing=>{
-    const seg=document.getElementById('tseg-'+ing.id);
-    if(seg) tank.insertBefore(seg,empty);
-  });
-
-  tankSegIds=[...curIds];
-}
-
-/* ===== UPDATE RESULT ===== */
-function updateResult(){
-  const totalMB=parseInt(document.getElementById('totalMB').value)||1000;
-  const total=ings.reduce((s,i)=>s+i.pct,0);
-  const isOver=total>100;
-
-  // badge
-  const badge=document.getElementById('pct-sum');
-  badge.textContent=total===100?t('ok'):`${total}%`;
-  badge.className='pct-badge '+(total===100?'ok':'bad');
-
-  ings.forEach(ing=>{
-    const ni=document.getElementById('pni-'+ing.id);
-    if(ni&&document.activeElement!==ni&&!autoMode)
-      ni.className='pct-num-inp'+(isOver?' over':'');
-    updateRangeBar(ing.id);
-  });
-
-  // MB summary — считаем только целые штуки
-  const filledMBReal=ings.reduce((s,i)=>{
-    const pcs=Math.floor(totalMB*i.pct/100/i.unit);
-    return s+pcs*i.unit;
-  },0);
-  const emptyMBReal=Math.max(0,totalMB-filledMBReal);
-  const sumEl=document.getElementById('mb-summary');
-  if(sumEl){
-    const isFull=emptyMBReal===0;
-    sumEl.innerHTML=`<span class="mb-filled">${filledMBReal}</span><span class="mb-sep">/</span>`+
-      `<span class="mb-total">${totalMB} MB</span>`+
-      (isFull
-        ?`<span class="mb-full-badge">✓ FULL</span>`
-        :`<span class="mb-remaining">−${emptyMBReal} MB пусто</span>`);
-  }
-
-  // Tank segments — ширина по целым штукам
-  ings.forEach((ing,idx)=>{
-    const seg=document.getElementById('tseg-'+ing.id);if(!seg)return;
-    const pcs=Math.floor(totalMB*ing.pct/100/ing.unit);
-    const mb=pcs*ing.unit;
-    const w=(mb/totalMB*100).toFixed(3)+'%';
-    seg.style.width=w;
-    const label=ing.name||('Ing '+(idx+1));
-    const lbl=document.getElementById('tlbl-'+ing.id);
-    const widthPct=mb/totalMB;
-    if(lbl){
-      if(widthPct>0.12){
-        lbl.innerHTML=`<span class="seg-lbl-name">${esc(label)}</span>`+
-          `<span class="seg-lbl-pct">${ing.pct}%</span>`+
-          `<span class="seg-lbl-mb">${mb} MB · ${pcs} шт</span>`;
-      } else if(widthPct>0.06){
-        lbl.innerHTML=`<span class="seg-lbl-name">${esc(label)}</span>`+
-          `<span class="seg-lbl-pct">${ing.pct}%</span>`;
-      } else {
-        lbl.textContent='';
-      }
-    }
-    const tip=document.getElementById('ttip-'+ing.id);
-    if(tip) tip.innerHTML=`<b>${label}</b><br>${ing.pct}% · ${mb} MB · ${pcs} ${t('pcs')}<br>${ing.pctMin}%–${ing.pctMax}%`;
-  });
-
-  // Empty zone
-  const emptyEl=document.getElementById('tank-empty');
-  const emptyMbEl=document.getElementById('tank-empty-mb');
-  const fillEdge=document.getElementById('fill-edge');
-  const emptyInner=document.getElementById('tank-empty-inner');
-  if(emptyEl){
-    const tooSmall=emptyMBReal/totalMB<0.04;
-    if(emptyMbEl) emptyMbEl.textContent=emptyMBReal>0?`${emptyMBReal} MB`:'';
-    if(emptyInner) emptyInner.style.display=tooSmall?'none':'flex';
-    if(fillEdge) fillEdge.style.display=emptyMBReal>0&&!tooSmall?'block':'none';
-  }
-
-  // Dust
-  if(emptyEl){
-    const existDust=emptyEl.querySelectorAll('.dust').length;
-    const wantDust=emptyMBReal>0?8:0;
-    if(existDust!==wantDust){
-      emptyEl.querySelectorAll('.dust').forEach(d=>d.remove());
-      if(wantDust) emptyEl.appendChild(makeDustParticles(wantDust));
-    }
-  }
-
-  // Units grid — только целые штуки
-  document.getElementById('units-grid').innerHTML=ings.map((ing,idx)=>{
-    const pcs=Math.floor(totalMB*ing.pct/100/ing.unit);
-    const mb=pcs*ing.unit;
-    const label=ing.name||('Ing '+(idx+1));
-    const inRange=ing.pct>=ing.pctMin&&ing.pct<=ing.pctMax;
-    return `<div class="unit-card">
-      <div class="uc-name"><span class="uc-dot" style="background:${HEX[idx%HEX.length]}"></span><span>${esc(label)}</span></div>
-      <div class="uc-val">${pcs}<span style="font-size:12px;font-weight:400;color:var(--muted)"> ${t('pcs')}</span></div>
-      <div class="uc-sub">${mb} MB · ${ing.pct}%<br>${ing.unit} MB/${t('pcs')}<br>
-        <span style="color:${inRange?'var(--success)':'var(--danger)'};font-size:9px">${ing.pctMin}%–${ing.pctMax}% ${inRange?'✓':'⚠ вне диапазона'}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-/* ===== SAVED ===== */
-function saveConf(){
-  const name=document.getElementById('save-name').value.trim();
-  if(!name){document.getElementById('save-name').focus();return;}
-  const totalMB=parseInt(document.getElementById('totalMB').value)||1000;
-  const cfgs=getSaved();
-  cfgs.unshift({id:Date.now(),name,totalMB,ings:ings.map(i=>({name:i.name,pct:i.pct,unit:i.unit,pctMin:i.pctMin,pctMax:i.pctMax}))});
-  setSaved(cfgs);document.getElementById('save-name').value='';renderSaved();
-}
-function loadConf(id){
-  const c=getSaved().find(x=>x.id===id);if(!c)return;
-  document.getElementById('totalMB').value=c.totalMB;
-  ings=c.ings.map(i=>({id:nid++,name:i.name,pct:i.pct,unit:i.unit||144,pctMin:i.pctMin||0,pctMax:i.pctMax||100}));
-  renderIngs();syncTankDom();updateResult();
-  if(autoMode) runAuto();
-}
-function delConf(id){setSaved(getSaved().filter(x=>x.id!==id));renderSaved();}
-function renderSaved(){
-  const el=document.getElementById('saved-list');
-  const cfgs=getSaved();
-  if(!cfgs.length){el.innerHTML=`<div class="saved-empty">${t('empty')}</div>`;return;}
-  el.innerHTML=cfgs.map(c=>`
-    <div class="saved-item">
-      <div class="si-info">
-        <div class="si-name">${esc(c.name)}</div>
-        <div class="si-desc">${esc(c.ings.map(i=>`${i.name||'?'} ${i.pct}% [${i.pctMin||0}-${i.pctMax||100}%]`).join(', '))} · ${c.totalMB} MB</div>
-      </div>
-      <button class="si-load" onclick="loadConf(${c.id})">${t('btn_load')}</button>
-      <button class="si-del" onclick="delConf(${c.id})">×</button>
-    </div>`).join('');
-}
-
-/* ===== INIT ===== */
-document.getElementById('totalMB').addEventListener('input',()=>{updateResult();if(autoMode)runAuto();});
-
-const savedTheme=getCookie('prop_theme');
-if(savedTheme){
-  document.body.className='theme-'+savedTheme;
-  document.querySelectorAll('.tdot').forEach(d=>d.classList.toggle('active',d.dataset.t===savedTheme));
-}
-
-// Default ingredients from the example in the task
-// Компонент 1: unit=100, range 40-50%
-// Компонент 2: unit=80,  range 20-25%
-// Компонент 3: unit=100, range 20-25%
-addIng('Компонент 1', 45, 144, 40, 50);
-addIng('Компонент 2', 22, 144, 20, 25);
-addIng('Компонент 3', 22, 144, 20, 25);
-
-// Авто включено по умолчанию
-document.getElementById('auto-toggle').checked=true;
-autoMode=true;
-const badge=document.getElementById('auto-badge');
-badge.textContent=t('auto_on');
-badge.className='auto-badge on';
-document.getElementById('auto-panel').classList.add('visible');
-renderIngs(); // перерисовать с locked=true (скрыть ползунки)
-runAuto();
-
-renderSaved();
-</script>
-</body>
-</html>
